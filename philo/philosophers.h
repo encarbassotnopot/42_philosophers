@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:13:55 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/09 18:25:19 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/10 12:52:48 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,16 @@
 # define TTEAT 2
 # define TTEEP 3
 # define MEALS 4
-# define MEALS 4
-// TODO: implementar struct de paràmetres: status del programa general,
-// id de cada philosopher, tempos donats com arguments i gestió de forquilles
-void philosophate(int *times);
+# define RUNNING 0
+# define EXITED 1
+typedef struct
+{
+	int				*sim_status;
+	int				ph_id;
+	int				ph_status;
+	int				ate;
+	int				params[5];
+	pthread_mutex_t	*forks;
+}					t_phinfo;
+void				philosophate(int *times);
 #endif
