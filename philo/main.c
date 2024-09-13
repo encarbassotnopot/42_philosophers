@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/09 17:45:43 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/13 10:43:00 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,40 @@ void	cleanup(pthread_t **threads, pthread_mutex_t **forks)
 	free(*forks);
 }
 
+t_phinfo	*info_init(int *params, int *sim_status, pthread_mutex_t *forks,
+		pthread_mutex_t *print_mut)
+{
+	t_phinfo	*infos;
+	int			i;
+
+	infos = ft_calloc(params[PHILS] + 1, sizeof(t_phinfo));
+	if (!infos)
+		return (NULL);
+	i = -1;
+	while (++i < params[PHILS])
+	{
+		infos[i].sim_status = sim_status;
+		infos[i].ph_id = i;
+		infos[i].ph_status = ALIVE;
+		infos[i].params = params;
+		infos[i].forks = forks;
+		infos[i].print_mut = print_mut;
+	}
+	return (infos);
+}
+
 int	main(int argc, char **argv)
 {
 	int				params[5];
 	pthread_t		*threads;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	print_mut;
 	int				i;
-	int				*t;
+	t_phinfo		*infos;
+	int				sim_status;
 
+	pthread_mutex_init(&print_mut, NULL);
+	sim_status = ALIVE;
 	if (parse_input(argc, argv, params))
 	{
 		printf("usage: %s number_of_philosophers time_to_die time_to_eat "
@@ -67,8 +93,9 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	threads = ft_calloc(params[PHILS] + 1, sizeof(pthread_t));
-	forks = ft_calloc(params[PHILS] + 2, sizeof(pthread_mutex_t));
-	if (!threads || !forks)
+	forks = ft_calloc(params[PHILS] + 1, sizeof(pthread_mutex_t));
+	infos = info_init(params, &sim_status, forks, &print_mut);
+	if (!threads || !forks || !infos)
 	{
 		free(threads);
 		free(forks);
@@ -79,18 +106,8 @@ int	main(int argc, char **argv)
 	i = -1;
 	while (++i < params[PHILS])
 	{
-		if (pthread_mutex_init(&forks[i], NULL))
-		{
-			cleanup(&threads, &forks);
-			return (1);
-		}
-	}
-	i = -1;
-	while (++i < params[PHILS])
-	{
-		t = malloc(sizeof(int));
-		*t = i;
-		if (pthread_create(&threads[i], NULL, (void *)*philosophate, (void *)t))
+		if (pthread_create(&threads[i], NULL, (void *)*philosophate,
+				(void *)&infos[i]) || pthread_mutex_init(&forks[i], NULL))
 		{
 			cleanup(&threads, &forks);
 			return (1);
