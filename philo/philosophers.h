@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:13:55 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/10 12:52:48 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/13 15:30:44 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,20 @@
 # define TTEAT 2
 # define TTEEP 3
 # define MEALS 4
-# define RUNNING 0
-# define EXITED 1
+# define DEAD 0
+# define ALIVE 1
+# define EATING 2
+# define SLEEPING 3
+# define THINKING 4
 typedef struct
 {
 	int				*sim_status;
 	int				ph_id;
 	int				ph_status;
 	int				ate;
-	int				params[5];
+	int				*params;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	*print_mut;
 }					t_phinfo;
-void				philosophate(int *times);
+void				philosophate(t_phinfo *info);
 #endif
