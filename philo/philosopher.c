@@ -6,26 +6,15 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/16 13:03:14 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/16 15:44:41 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	print_msg(t_phinfo *info, char *msg)
-{
-	struct timeval	tv;
-
-	pthread_mutex_lock(info->print_mut);
-	gettimeofday(&tv, NULL);
-	printf("[%lu%03lu] %d %s\n", tv.tv_sec, tv.tv_usec / 1000, info->ph_id,
-		msg);
-	pthread_mutex_unlock(info->print_mut);
-}
-
 void	next_task(t_phinfo *info)
 {
-	if (info->ph_status == MAY_EAT)
+	if (info->ph_status == THINKING)
 	{
 		info->ph_status = EATING;
 		gettimeofday(&info->last_meal, NULL);

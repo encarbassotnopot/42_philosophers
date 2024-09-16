@@ -1,32 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   necromancer.c                                      :+:      :+:    :+:   */
+/*   workers.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/16 13:13:19 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/16 17:46:09 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	philosophate(t_phinfo **philos, int *params)
+void	necromancer(t_winfo *w)
 {
-	int		i;
-	int		ate_enough;
-	timeval	tv;
+	int				i;
+	int				ate_enough;
+	struct timeval	meal_limit;
 
-	i = -1;
-	while (philos[0]->sim_status == ALIVE)
+	while (w->sim_status == ALIVE)
 	{
+		gettimeofday(&meal_limit, NULL);
+		time_subt(&meal_limit, w->params[TTDIE]);
+		i = -1;
 		ate_enough = 1;
-		while (philos[++i])
+		while (++i < w->params[PHILS])
 		{
-			if (mealsphilos[i]->ate < params[MEALS] && params[MEALS])
+			if (w->phinfos[i].ate < w->params[MEALS] && w->params[MEALS])
 				ate_enough = 0;
-
+			if (time_diff(&w->phinfos[i].last_meal, &meal_limit) == -1)
+			{
+				print_msg(&w->phinfos[i], "died");
+				w->sim_status = DEAD;
+				break ;
+			}
 		}
+		if (ate_enough)
+			w->sim_status = DEAD;
 	}
 }
+
+
+// implementar waiter
