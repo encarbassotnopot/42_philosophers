@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:13:55 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/16 13:24:36 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/16 17:32:39 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@
 # define SLEEPING 3
 # define THINKING 4
 # define MAY_EAT 5
-typedef struct
+
+typedef struct s_phinfo
 {
 	int				*sim_status;
 	int				ph_id;
@@ -40,7 +41,17 @@ typedef struct
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*print_mut;
 }					t_phinfo;
+typedef struct s_winfo
+{
+	int				sim_status;
+	int				*params;
+	t_phinfo		*phinfos;
+	pthread_mutex_t	print_mut;
+	pthread_mutex_t	*forks;
+}					t_winfo;
 void				philosophate(t_phinfo *info);
 void				print_msg(t_phinfo *info, char *msg);
 int					time_diff(struct timeval *since, struct timeval *until);
+void				time_subt(struct timeval *tv, int ms);
+void				necromancer(t_winfo *w);
 #endif
