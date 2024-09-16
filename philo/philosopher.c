@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/13 16:42:13 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/16 13:03:14 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,10 @@ void	print_msg(t_phinfo *info, char *msg)
 
 void	next_task(t_phinfo *info)
 {
-	if (info->ph_status == THINKING)
+	if (info->ph_status == MAY_EAT)
 	{
 		info->ph_status = EATING;
+		gettimeofday(&info->last_meal, NULL);
 		print_msg(info, "is eating");
 		usleep(info->params[TTEAT] * 1000);
 		info->ate++;
@@ -47,6 +48,8 @@ void	next_task(t_phinfo *info)
 
 void	philosophate(t_phinfo *info)
 {
+	if (info->last_meal.tv_sec == 0)
+		gettimeofday(&info->last_meal, NULL);
 	info->ph_status = THINKING;
 	while (*info->sim_status == ALIVE)
 	{

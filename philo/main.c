@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/13 10:43:00 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/16 13:02:23 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,9 @@ t_phinfo	*info_init(int *params, int *sim_status, pthread_mutex_t *forks,
 	{
 		infos[i].sim_status = sim_status;
 		infos[i].ph_id = i;
-		infos[i].ph_status = ALIVE;
+		infos[i].ph_status = THINKING;
 		infos[i].params = params;
+		infos[i].last_meal = (struct timeval) {0, 0};
 		infos[i].forks = forks;
 		infos[i].print_mut = print_mut;
 	}
