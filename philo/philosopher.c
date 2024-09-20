@@ -6,16 +6,25 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/17 12:02:06 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/20 13:21:31 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
+void	wait_forks(t_phinfo *info)
+{
+	while (1)
+	{
+		pthread_mutex_unlock(&info->forks[(id - 1 + count) % count]);
+	}
+}
+
 void	next_task(t_phinfo *info, int id, int count)
 {
-	if (info->ph_status == THINKING && info->may_eat)
+	if (info->ph_status == THINKING)
 	{
+		wait_forks(info);
 		pthread_mutex_lock(&info->forks[(id - 1 + count) % count]);
 		print_msg(info, "has taken a fork");
 		pthread_mutex_lock(&info->forks[(id + 1) % count]);

@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/17 12:10:53 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/20 13:30:23 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	cleanup(pthread_t *threads, t_winfo *winfo)
 	free(winfo->phinfos);
 }
 
-t_phinfo	*phinfo_init(t_winfo *winfo)
+t_phinfo	*phinfo_init(t_winfo *winfo, int *may_eat)
 {
 	t_phinfo	*infos;
 	int			i;
@@ -98,7 +98,7 @@ int	main(int argc, char **argv)
 {
 	t_winfo		winfo;
 	pthread_t	*threads;
-	int			i;
+	int			may_eat;
 	int			params[5];
 
 	pthread_mutex_init(&winfo.print_mut, NULL);
@@ -125,7 +125,7 @@ int	main(int argc, char **argv)
 	}
 	printf("num %d, die %d, eat %d, sleep %d, times %d\n", params[0], params[1],
 		params[2], params[3], params[4]);
-	i = run_threads(&winfo, threads);
+	run_threads(&winfo, threads);
 	/*cleanup(threads, &winfo);*/
 	return (i);
 }
