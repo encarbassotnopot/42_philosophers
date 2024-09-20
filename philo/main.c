@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/16 17:45:13 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/17 12:10:53 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ t_phinfo	*phinfo_init(t_winfo *winfo)
 		infos[i].last_meal = (struct timeval){0, 0};
 		infos[i].forks = winfo->forks;
 		infos[i].print_mut = &winfo->print_mut;
+		infos[i].ph_mut = &winfo->ph_muts[i];
 	}
 	return (infos);
 }
@@ -80,19 +81,16 @@ int	run_threads(t_winfo *winfo, pthread_t *threads)
 	while (++i < winfo->params[PHILS])
 	{
 		if (pthread_mutex_init(&winfo->forks[i], NULL)
+			|| pthread_mutex_init(&winfo->ph_muts[i], NULL)
 			|| pthread_create(&threads[i], NULL, (void *)*philosophate,
 				(void *)&winfo->phinfos[i]))
 			return (1);
 	}
 	pthread_create(&threads[i], NULL, (void *)*necromancer, (void *)winfo);
 	i = -1;
-	while (++i < winfo->params[PHILS])
-	{
-		if (pthread_detach(threads[i]))
+	while (++i < winfo->params[PHILS] + 1)
+		if (pthread_join(threads[i], NULL))
 			return (1);
-	}
-	if (pthread_join(threads[i], NULL))
-		return (1);
 	return (0);
 }
 
@@ -115,17 +113,19 @@ int	main(int argc, char **argv)
 	}
 	threads = ft_calloc(params[PHILS] + 3, sizeof(pthread_t));
 	winfo.forks = ft_calloc(params[PHILS] + 1, sizeof(pthread_mutex_t));
+	winfo.ph_muts = ft_calloc(params[PHILS] + 1, sizeof(pthread_mutex_t));
 	winfo.phinfos = phinfo_init(&winfo);
-	if (!threads || !winfo.forks || !winfo.phinfos)
+	if (!threads || !winfo.forks || !winfo.ph_muts || !winfo.phinfos)
 	{
 		free(threads);
 		free(winfo.forks);
+		free(winfo.ph_muts);
 		free(winfo.phinfos);
 		return (1);
 	}
 	printf("num %d, die %d, eat %d, sleep %d, times %d\n", params[0], params[1],
 		params[2], params[3], params[4]);
 	i = run_threads(&winfo, threads);
-	cleanup(threads, &winfo);
+	/*cleanup(threads, &winfo);*/
 	return (i);
 }

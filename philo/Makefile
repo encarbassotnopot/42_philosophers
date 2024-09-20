@@ -7,7 +7,7 @@ LIB_FLAGS = -rpath $(LIBFT) -L $(LIBFT) -lft
 BUILD_DIR = build
 
 NAME = philo
-CFLAGS = -Wall -Wextra -g -MMD -fsanitize=address $(HDR_FLAGS) -pthread
+CFLAGS = -Wall -Wextra -g -MMD -fsanitize=thread $(HDR_FLAGS) -pthread
 
 CC = clang
 LIBFT = $(CURDIR)/../libft
