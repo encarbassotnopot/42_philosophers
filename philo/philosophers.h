@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:13:55 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/16 17:32:39 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/17 11:58:05 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@
 # define EATING 2
 # define SLEEPING 3
 # define THINKING 4
-# define MAY_EAT 5
 
 typedef struct s_phinfo
 {
@@ -36,10 +35,12 @@ typedef struct s_phinfo
 	int				ph_id;
 	int				ph_status;
 	int				ate;
+	int				may_eat;
 	int				*params;
 	struct timeval	last_meal;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*print_mut;
+	pthread_mutex_t	*ph_mut;
 }					t_phinfo;
 typedef struct s_winfo
 {
@@ -47,6 +48,7 @@ typedef struct s_winfo
 	int				*params;
 	t_phinfo		*phinfos;
 	pthread_mutex_t	print_mut;
+	pthread_mutex_t	*ph_muts;
 	pthread_mutex_t	*forks;
 }					t_winfo;
 void				philosophate(t_phinfo *info);

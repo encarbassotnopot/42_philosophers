@@ -6,21 +6,28 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/16 15:44:41 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/17 12:02:06 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	next_task(t_phinfo *info)
+void	next_task(t_phinfo *info, int id, int count)
 {
-	if (info->ph_status == THINKING)
+	if (info->ph_status == THINKING && info->may_eat)
 	{
+		pthread_mutex_lock(&info->forks[(id - 1 + count) % count]);
+		print_msg(info, "has taken a fork");
+		pthread_mutex_lock(&info->forks[(id + 1) % count]);
+		print_msg(info, "has taken a fork");
 		info->ph_status = EATING;
 		gettimeofday(&info->last_meal, NULL);
-		print_msg(info, "is eating");
-		usleep(info->params[TTEAT] * 1000);
+		info->may_eat = 0;
 		info->ate++;
+		print_msg(info, "is eating");
+		pthread_mutex_unlock(&info->forks[(id - 1 + count) % count]);
+		pthread_mutex_unlock(&info->forks[(id + 1) % count]);
+		usleep(info->params[TTEAT] * 1000);
 	}
 	else if (info->ph_status == EATING)
 	{
@@ -39,9 +46,14 @@ void	philosophate(t_phinfo *info)
 {
 	if (info->last_meal.tv_sec == 0)
 		gettimeofday(&info->last_meal, NULL);
-	info->ph_status = THINKING;
+	if (info->ph_id % 2 == 0)
+		info->may_eat = 1;
+	else
+		info->may_eat = 0;
 	while (*info->sim_status == ALIVE)
 	{
-		next_task(info);
+		pthread_mutex_lock(info->ph_mut);
+		next_task(info, info->ph_id, info->params[PHILS]);
+		pthread_mutex_unlock(info->ph_mut);
 	}
 }
