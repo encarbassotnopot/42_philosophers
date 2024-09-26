@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/26 18:08:25 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/26 18:31:54 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ t_phinfo	*phinfo_init(t_winfo *winfo)
 		infos[i].last_meal = (struct timeval){0, 0};
 		infos[i].forks = winfo->forks;
 		infos[i].eat_mut = &winfo->eat_mut;
+		infos[i].sim_mut = &winfo->sim_mut;
 		infos[i].print_mut = &winfo->print_mut;
 		infos[i].ph_mut = &winfo->ph_muts[i];
 	}
@@ -91,8 +92,7 @@ int	run_threads(t_winfo *winfo, pthread_t *threads)
 	pthread_create(&threads[i], NULL, (void *)*necromancer, (void *)winfo);
 	i = -1;
 	while (++i < winfo->params[PHILS] + 1)
-		if (pthread_join(threads[i], NULL))
-			return (1);
+		pthread_join(threads[i], NULL);
 	return (0);
 }
 
@@ -104,6 +104,7 @@ int	main(int argc, char **argv)
 
 	pthread_mutex_init(&winfo.print_mut, NULL);
 	pthread_mutex_init(&winfo.eat_mut, NULL);
+	pthread_mutex_init(&winfo.sim_mut, NULL);
 	winfo.sim_status = ALIVE;
 	winfo.params = params;
 	if (parse_input(argc, argv, params))

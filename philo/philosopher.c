@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/26 18:11:37 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/26 18:51:15 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,14 @@ void	eat(t_phinfo *info, int id, int count)
 		usleep(1000);
 	}
 	pthread_mutex_unlock(info->eat_mut);
+	// TODO: assegurar-se d'agafar i deixar forquilles en l'ordre que toca
 	pthread_mutex_lock(&info->forks[(id - 1 + count) % count]);
-	print_msg(info, "has taken a fork");
+	print_msg(info, "has taken a fork (-1)");
 	pthread_mutex_lock(&info->forks[(id + 1) % count]);
-	print_msg(info, "has taken a fork");
+	print_msg(info, "has taken a fork (+1)");
 	info->ph_status = EATING;
 	gettimeofday(&info->last_meal, NULL);
 	info->ate++;
-	print_msg(info, "is eating");
 	pthread_mutex_unlock(&info->forks[(id - 1 + count) % count]);
 	pthread_mutex_unlock(&info->forks[(id + 1) % count]);
 	pthread_mutex_lock(info->eat_mut);
@@ -46,6 +46,7 @@ void	next_task(t_phinfo *info, int id, int count)
 	if (info->ph_status == THINKING)
 	{
 		eat(info, id, count);
+		print_msg(info, "is eating");
 		usleep(info->params[TTEAT] * 1000);
 	}
 	else if (info->ph_status == EATING)
@@ -61,14 +62,24 @@ void	next_task(t_phinfo *info, int id, int count)
 	}
 }
 
+int	get_sim_status(t_phinfo *info)
+{
+	int	status;
+
+	pthread_mutex_lock(info->sim_mut);
+	status = *info->sim_status;
+	pthread_mutex_unlock(info->sim_mut);
+	return (status);
+}
+
 void	philosophate(t_phinfo *info)
 {
 	if (info->last_meal.tv_sec == 0)
 		gettimeofday(&info->last_meal, NULL);
-	while (*info->sim_status == ALIVE)
+	while (get_sim_status(info) == ALIVE)
 	{
-		/*pthread_mutex_lock(info->ph_mut);*/
+		pthread_mutex_lock(info->ph_mut);
 		next_task(info, info->ph_id, info->params[PHILS]);
-		/*pthread_mutex_unlock(info->ph_mut);*/
+		pthread_mutex_unlock(info->ph_mut);
 	}
 }
