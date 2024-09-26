@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:13:55 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/20 13:22:09 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/26 18:08:41 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,10 @@ typedef struct s_phinfo
 typedef struct s_winfo
 {
 	int				sim_status;
+	int				may_eat;
 	int				*params;
 	t_phinfo		*phinfos;
+	pthread_mutex_t	eat_mut;
 	pthread_mutex_t	print_mut;
 	pthread_mutex_t	*ph_muts;
 	pthread_mutex_t	*forks;

@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/20 13:30:23 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/26 18:08:25 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	cleanup(pthread_t *threads, t_winfo *winfo)
 	free(winfo->phinfos);
 }
 
-t_phinfo	*phinfo_init(t_winfo *winfo, int *may_eat)
+t_phinfo	*phinfo_init(t_winfo *winfo)
 {
 	t_phinfo	*infos;
 	int			i;
@@ -65,8 +65,10 @@ t_phinfo	*phinfo_init(t_winfo *winfo, int *may_eat)
 		infos[i].ph_id = i;
 		infos[i].ph_status = THINKING;
 		infos[i].params = winfo->params;
+		infos[i].may_eat = &winfo->may_eat;
 		infos[i].last_meal = (struct timeval){0, 0};
 		infos[i].forks = winfo->forks;
+		infos[i].eat_mut = &winfo->eat_mut;
 		infos[i].print_mut = &winfo->print_mut;
 		infos[i].ph_mut = &winfo->ph_muts[i];
 	}
@@ -98,10 +100,10 @@ int	main(int argc, char **argv)
 {
 	t_winfo		winfo;
 	pthread_t	*threads;
-	int			may_eat;
 	int			params[5];
 
 	pthread_mutex_init(&winfo.print_mut, NULL);
+	pthread_mutex_init(&winfo.eat_mut, NULL);
 	winfo.sim_status = ALIVE;
 	winfo.params = params;
 	if (parse_input(argc, argv, params))
@@ -111,6 +113,7 @@ int	main(int argc, char **argv)
 				argv[0]);
 		return (1);
 	}
+	winfo.may_eat = params[PHILS] - 1;
 	threads = ft_calloc(params[PHILS] + 3, sizeof(pthread_t));
 	winfo.forks = ft_calloc(params[PHILS] + 1, sizeof(pthread_mutex_t));
 	winfo.ph_muts = ft_calloc(params[PHILS] + 1, sizeof(pthread_mutex_t));
@@ -127,5 +130,4 @@ int	main(int argc, char **argv)
 		params[2], params[3], params[4]);
 	run_threads(&winfo, threads);
 	/*cleanup(threads, &winfo);*/
-	return (i);
 }
