@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/26 18:40:18 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/30 15:14:36 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,25 +48,3 @@ void	necromancer(t_winfo *w)
 	}
 }
 
-void	waiter(t_winfo *w)
-{
-	int	i;
-	int	finished_eating;
-	int	meal_count;
-	int	meal_min;
-
-	meal_count = 0;
-	while (w->sim_status == ALIVE)
-	{
-		i = -1;
-		finished_eating = 1;
-		meal_min = w->phinfos[0].ate;
-		while (++i < w->params[PHILS])
-		{
-			if (w->phinfos[i].ate < meal_min)
-			{
-				meal_min = w->phinfos[i].ate;
-			}
-		}
-	}
-}

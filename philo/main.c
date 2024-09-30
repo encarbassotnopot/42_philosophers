@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/26 18:31:54 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/30 14:42:05 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,10 @@ int	run_threads(t_winfo *winfo, pthread_t *threads)
 	i = -1;
 	while (++i < winfo->params[PHILS])
 	{
-		if (pthread_mutex_init(&winfo->forks[i], NULL)
-			|| pthread_mutex_init(&winfo->ph_muts[i], NULL)
-			|| pthread_create(&threads[i], NULL, (void *)*philosophate,
-				(void *)&winfo->phinfos[i]))
-			return (1);
+		pthread_mutex_init(&winfo->forks[i], NULL);
+		pthread_mutex_init(&winfo->ph_muts[i], NULL);
+		pthread_create(&threads[i], NULL, (void *)*philosophate,
+			(void *)&winfo->phinfos[i]);
 	}
 	pthread_create(&threads[i], NULL, (void *)*necromancer, (void *)winfo);
 	i = -1;
