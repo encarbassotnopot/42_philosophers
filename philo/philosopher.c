@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/26 18:51:15 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/09/30 16:09:03 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,15 @@ void	eat(t_phinfo *info, int id, int count)
 		usleep(1000);
 	}
 	pthread_mutex_unlock(info->eat_mut);
-	// TODO: assegurar-se d'agafar i deixar forquilles en l'ordre que toca
-	pthread_mutex_lock(&info->forks[(id - 1 + count) % count]);
-	print_msg(info, "has taken a fork (-1)");
-	pthread_mutex_lock(&info->forks[(id + 1) % count]);
+	pthread_mutex_lock(info->forks + id);
+	print_msg(info, "has taken a fork (0)");
+	pthread_mutex_lock(info->forks + (id + 1) % count);
 	print_msg(info, "has taken a fork (+1)");
 	info->ph_status = EATING;
 	gettimeofday(&info->last_meal, NULL);
 	info->ate++;
-	pthread_mutex_unlock(&info->forks[(id - 1 + count) % count]);
-	pthread_mutex_unlock(&info->forks[(id + 1) % count]);
+	pthread_mutex_unlock(info->forks + id);
+	pthread_mutex_unlock(info->forks + (id + 1) % count);
 	pthread_mutex_lock(info->eat_mut);
 	*info->may_eat += 1;
 	pthread_mutex_unlock(info->eat_mut);

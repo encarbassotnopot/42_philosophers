@@ -26,6 +26,9 @@ $(BUILD_DIR):
 $(NAME): libft $(OBJ_FILES) 
 	$(CC) $(CFLAGS) $(LIB_FLAGS) -o $(NAME) $(OBJ_FILES)
 
+nofs: CFLAGS = -Wall -Wextra -g -MMD $(HDR_FLAGS) -pthread
+nofs: all
+
 clean reclean:
 	rm -rf $(BUILD_DIR)
 
@@ -40,4 +43,4 @@ re: fclean all reclean
 
 -include $(DEP_FILES)
 
-.PHONY: all clean fclean re libft
+.PHONY: all clean fclean re libft nofs deepclean
