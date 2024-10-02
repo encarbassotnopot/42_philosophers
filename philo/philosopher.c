@@ -6,11 +6,27 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/30 16:09:03 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/02 16:26:09 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+int	get_sim_status(t_phinfo *info)
+{
+	int	status;
+
+	pthread_mutex_lock(info->sim_mut);
+	status = *info->sim_status;
+	pthread_mutex_unlock(info->sim_mut);
+	return (status);
+}
+
+void	isleep(t_phinfo *info, int ms)
+{
+	while (--ms >= 0 && get_sim_status(info) == ALIVE)
+		usleep(1000);
+}
 
 void	eat(t_phinfo *info, int id, int count)
 {
@@ -23,13 +39,14 @@ void	eat(t_phinfo *info, int id, int count)
 			break ;
 		}
 		pthread_mutex_unlock(info->eat_mut);
-		usleep(1000);
+		if (get_sim_status(info) != ALIVE)
+			return;
 	}
 	pthread_mutex_unlock(info->eat_mut);
 	pthread_mutex_lock(info->forks + id);
-	print_msg(info, "has taken a fork (0)");
+	print_msg(info, "has taken a fork");
 	pthread_mutex_lock(info->forks + (id + 1) % count);
-	print_msg(info, "has taken a fork (+1)");
+	print_msg(info, "has taken a fork");
 	info->ph_status = EATING;
 	gettimeofday(&info->last_meal, NULL);
 	info->ate++;
@@ -46,39 +63,35 @@ void	next_task(t_phinfo *info, int id, int count)
 	{
 		eat(info, id, count);
 		print_msg(info, "is eating");
-		usleep(info->params[TTEAT] * 1000);
+		pthread_mutex_unlock(info->ph_mut);
+		isleep(info, info->params[TTEAT]);
 	}
 	else if (info->ph_status == EATING)
 	{
 		info->ph_status = SLEEPING;
 		print_msg(info, "is sleeping");
-		usleep(info->params[TTEEP] * 1000);
+		pthread_mutex_unlock(info->ph_mut);
+		isleep(info, info->params[TTEEP]);
 	}
 	else if (info->ph_status == SLEEPING)
 	{
 		info->ph_status = THINKING;
 		print_msg(info, "is thinking");
+		pthread_mutex_unlock(info->ph_mut);
 	}
-}
-
-int	get_sim_status(t_phinfo *info)
-{
-	int	status;
-
-	pthread_mutex_lock(info->sim_mut);
-	status = *info->sim_status;
-	pthread_mutex_unlock(info->sim_mut);
-	return (status);
 }
 
 void	philosophate(t_phinfo *info)
 {
+	pthread_mutex_lock(info->ph_mut);
+	pthread_mutex_unlock(info->ph_mut);
 	if (info->last_meal.tv_sec == 0)
 		gettimeofday(&info->last_meal, NULL);
+	if (info->ph_id % 2)
+		isleep(info, info->params[TTEAT]);
 	while (get_sim_status(info) == ALIVE)
 	{
 		pthread_mutex_lock(info->ph_mut);
 		next_task(info, info->ph_id, info->params[PHILS]);
-		pthread_mutex_unlock(info->ph_mut);
 	}
 }

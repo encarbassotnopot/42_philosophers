@@ -26,8 +26,11 @@ $(BUILD_DIR):
 $(NAME): libft $(OBJ_FILES) 
 	$(CC) $(CFLAGS) $(LIB_FLAGS) -o $(NAME) $(OBJ_FILES)
 
+fsu: CFLAGS = -Wall -Wextra -g -MMD -fsanitize=undefined $(HDR_FLAGS) -pthread
+fsu: re
+
 nofs: CFLAGS = -Wall -Wextra -g -MMD $(HDR_FLAGS) -pthread
-nofs: all
+nofs: re
 
 clean reclean:
 	rm -rf $(BUILD_DIR)
