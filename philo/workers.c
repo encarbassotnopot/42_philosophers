@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/30 15:14:36 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/02 15:44:06 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	necromancer(t_winfo *w)
 		time_subt(&meal_limit, w->params[TTDIE]);
 		i = -1;
 		ate_enough = 1;
-		while (++i < w->params[PHILS] && body_count == 0)
+		while (++i < w->params[PHILS] && !body_count && ate_enough)
 		{
 			pthread_mutex_lock(&w->ph_muts[i]);
 			if (w->phinfos[i].ate < w->params[MEALS] && w->params[MEALS])
@@ -38,7 +38,7 @@ void	necromancer(t_winfo *w)
 			}
 			pthread_mutex_unlock(&w->ph_muts[i]);
 		}
-		if (ate_enough == w->params[PHILS] || body_count > 0)
+		if ((ate_enough && w->params[MEALS]) || body_count)
 		{
 			pthread_mutex_lock(&w->sim_mut);
 			w->sim_status = DEAD;
@@ -46,5 +46,5 @@ void	necromancer(t_winfo *w)
 			break ;
 		}
 	}
+	dprintf(STDERR_FILENO, "necro dead \n");
 }
-

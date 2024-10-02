@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/30 14:42:05 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/02 15:05:14 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,13 @@ int	run_threads(t_winfo *winfo, pthread_t *threads)
 	{
 		pthread_mutex_init(&winfo->forks[i], NULL);
 		pthread_mutex_init(&winfo->ph_muts[i], NULL);
+		pthread_mutex_lock(&winfo->ph_muts[i]);
 		pthread_create(&threads[i], NULL, (void *)*philosophate,
 			(void *)&winfo->phinfos[i]);
 	}
+	i = -1;
+	while (++i < winfo->params[PHILS])
+		pthread_mutex_unlock(&winfo->ph_muts[i]);
 	pthread_create(&threads[i], NULL, (void *)*necromancer, (void *)winfo);
 	i = -1;
 	while (++i < winfo->params[PHILS] + 1)
@@ -114,9 +118,9 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	winfo.may_eat = params[PHILS] - 1;
-	threads = ft_calloc(params[PHILS] + 3, sizeof(pthread_t));
-	winfo.forks = ft_calloc(params[PHILS] + 1, sizeof(pthread_mutex_t));
-	winfo.ph_muts = ft_calloc(params[PHILS] + 1, sizeof(pthread_mutex_t));
+	threads = ft_calloc(params[PHILS] + 1, sizeof(pthread_t));
+	winfo.forks = ft_calloc(params[PHILS], sizeof(pthread_mutex_t));
+	winfo.ph_muts = ft_calloc(params[PHILS], sizeof(pthread_mutex_t));
 	winfo.phinfos = phinfo_init(&winfo);
 	if (!threads || !winfo.forks || !winfo.ph_muts || !winfo.phinfos)
 	{
