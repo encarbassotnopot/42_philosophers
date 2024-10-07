@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/10/07 13:19:27 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/07 13:34:03 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,9 +92,9 @@ int	run_threads(t_winfo *winfo, pthread_t *threads)
 			(void *)&winfo->phinfos[i]);
 	}
 	i = -1;
+	gettimeofday(&winfo->start_time, NULL);
 	while (++i < winfo->params[PHILS])
 		pthread_mutex_unlock(&winfo->ph_muts[i]);
-	gettimeofday(&winfo->start_time, NULL);
 	pthread_create(&threads[i], NULL, (void *)*necromancer, (void *)winfo);
 	i = -1;
 	while (++i < winfo->params[PHILS] + 1)

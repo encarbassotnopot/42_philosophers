@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/10/07 12:47:58 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/07 15:07:11 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,14 @@ void	isleep(t_phinfo *info, int ms)
 	gettimeofday(&alarm, NULL);
 	time_add(&alarm, ms);
 	gettimeofday(&current_time, NULL);
+	pthread_mutex_unlock(info->ph_mut);
 	while (time_diff(&current_time, &alarm) > 0
 		&& get_sim_status(info) == ALIVE)
 	{
 		usleep(1000);
 		gettimeofday(&current_time, NULL);
 	}
+	pthread_mutex_lock(info->ph_mut);
 }
 
 void	eat(t_phinfo *info, int id, int count)
