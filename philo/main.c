@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/10/07 13:06:54 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/07 13:19:27 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void	cleanup(pthread_t *threads, t_winfo *winfo)
 	free(threads);
 	free(winfo->forks);
 	free(winfo->phinfos);
+	free(winfo->ph_muts);
 }
 
 t_phinfo	*phinfo_init(t_winfo *winfo)
@@ -126,14 +127,9 @@ int	main(int argc, char **argv)
 	winfo.phinfos = phinfo_init(&winfo);
 	if (!threads || !winfo.forks || !winfo.ph_muts || !winfo.phinfos)
 	{
-		free(threads);
-		free(winfo.forks);
-		free(winfo.ph_muts);
-		free(winfo.phinfos);
+		cleanup(threads, &winfo);
 		return (1);
 	}
-	printf("num %d, die %d, eat %d, sleep %d, times %d\n", params[0], params[1],
-		params[2], params[3], params[4]);
 	run_threads(&winfo, threads);
-	/*cleanup(threads, &winfo);*/
+	cleanup(threads, &winfo);
 }
