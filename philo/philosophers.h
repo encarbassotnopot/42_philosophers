@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:13:55 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/09/26 18:22:18 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/07 12:40:53 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ typedef struct s_winfo
 }					t_winfo;
 void				philosophate(t_phinfo *info);
 void				print_msg(t_phinfo *info, char *msg);
-int					time_diff(struct timeval *since, struct timeval *until);
+void				time_add(struct timeval *tv, int ms);
 void				time_subt(struct timeval *tv, int ms);
+long				time_diff(struct timeval *since, struct timeval *until);
 void				necromancer(t_winfo *w);
 #endif

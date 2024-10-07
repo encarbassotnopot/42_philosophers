@@ -7,7 +7,7 @@ LIB_FLAGS = -rpath $(LIBFT) -L $(LIBFT) -lft
 BUILD_DIR = build
 
 NAME = philo
-CFLAGS = -Wall -Wextra -g -MMD -fsanitize=thread $(HDR_FLAGS) -pthread
+CFLAGS = -Wall -Wextra -g -MMD $(HDR_FLAGS) -pthread
 
 CC = clang
 LIBFT = $(CURDIR)/../libft
@@ -29,8 +29,8 @@ $(NAME): libft $(OBJ_FILES)
 fsu: CFLAGS = -Wall -Wextra -g -MMD -fsanitize=undefined $(HDR_FLAGS) -pthread
 fsu: re
 
-nofs: CFLAGS = -Wall -Wextra -g -MMD $(HDR_FLAGS) -pthread
-nofs: re
+fst: CFLAGS = -Wall -Wextra -g -MMD -fsanitize=thread $(HDR_FLAGS) -pthread
+fst: re
 
 clean reclean:
 	rm -rf $(BUILD_DIR)
