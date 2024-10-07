@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/10/02 16:26:09 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/07 12:47:58 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,18 @@ int	get_sim_status(t_phinfo *info)
 
 void	isleep(t_phinfo *info, int ms)
 {
-	while (--ms >= 0 && get_sim_status(info) == ALIVE)
+	struct timeval	alarm;
+	struct timeval	current_time;
+
+	gettimeofday(&alarm, NULL);
+	time_add(&alarm, ms);
+	gettimeofday(&current_time, NULL);
+	while (time_diff(&current_time, &alarm) > 0
+		&& get_sim_status(info) == ALIVE)
+	{
 		usleep(1000);
+		gettimeofday(&current_time, NULL);
+	}
 }
 
 void	eat(t_phinfo *info, int id, int count)
@@ -40,7 +50,7 @@ void	eat(t_phinfo *info, int id, int count)
 		}
 		pthread_mutex_unlock(info->eat_mut);
 		if (get_sim_status(info) != ALIVE)
-			return;
+			return ;
 	}
 	pthread_mutex_unlock(info->eat_mut);
 	pthread_mutex_lock(info->forks + id);
