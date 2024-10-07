@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/10/02 15:05:14 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/07 13:06:54 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ t_phinfo	*phinfo_init(t_winfo *winfo)
 		infos[i].ph_id = i;
 		infos[i].ph_status = THINKING;
 		infos[i].params = winfo->params;
+		infos[i].start_time = &winfo->start_time;
 		infos[i].may_eat = &winfo->may_eat;
 		infos[i].last_meal = (struct timeval){0, 0};
 		infos[i].forks = winfo->forks;
@@ -92,6 +93,7 @@ int	run_threads(t_winfo *winfo, pthread_t *threads)
 	i = -1;
 	while (++i < winfo->params[PHILS])
 		pthread_mutex_unlock(&winfo->ph_muts[i]);
+	gettimeofday(&winfo->start_time, NULL);
 	pthread_create(&threads[i], NULL, (void *)*necromancer, (void *)winfo);
 	i = -1;
 	while (++i < winfo->params[PHILS] + 1)
