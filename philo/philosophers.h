@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:13:55 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/10/07 12:40:53 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/07 13:07:03 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct s_phinfo
 	int				*may_eat;
 	int				*params;
 	struct timeval	last_meal;
+	struct timeval	*start_time;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*eat_mut;
 	pthread_mutex_t	*sim_mut;
@@ -49,6 +50,7 @@ typedef struct s_winfo
 	int				sim_status;
 	int				may_eat;
 	int				*params;
+	struct timeval	start_time;
 	t_phinfo		*phinfos;
 	pthread_mutex_t	eat_mut;
 	pthread_mutex_t	sim_mut;
