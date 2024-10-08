@@ -14,6 +14,8 @@ LIBFT = $(CURDIR)/../libft
 
 all: $(NAME)
 
+$(LIBFT)/libft.so: libft
+
 libft:
 	make -C $(LIBFT)
 
@@ -23,7 +25,7 @@ $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR)
 $(BUILD_DIR):
 	mkdir -p $@
 
-$(NAME): libft $(OBJ_FILES) 
+$(NAME): $(LIBFT)/libft.so $(OBJ_FILES)
 	$(CC) $(CFLAGS) $(LIB_FLAGS) -o $(NAME) $(OBJ_FILES)
 
 fsu: CFLAGS += -fsanitize=undefined
