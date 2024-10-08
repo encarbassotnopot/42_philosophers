@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/10/08 11:02:52 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/08 11:53:15 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ void	eat(t_phinfo *info, int id, int count)
 	pthread_mutex_unlock(info->eat_mut);
 	pthread_mutex_lock(info->forks + id);
 	print_msg(info, "has taken a fork");
+	if (info->forks + (id + 1) % count == info->forks + id)
+		return ;
 	pthread_mutex_lock(info->forks + (id + 1) % count);
 	print_msg(info, "has taken a fork");
 	info->ph_status = EATING;
@@ -73,6 +75,8 @@ void	next_task(t_phinfo *info, int id, int count)
 		if (get_sim_status(info) == ALIVE)
 			isleep(info, info->params[TTEAT]);
 		pthread_mutex_unlock(info->forks + id);
+		if (info->forks + (id + 1) % count == info->forks + id)
+			return ;
 		pthread_mutex_unlock(info->forks + (id + 1) % count);
 		pthread_mutex_lock(info->eat_mut);
 		*info->may_eat += 1;

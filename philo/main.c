@@ -6,39 +6,11 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:11:54 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/10/07 13:34:03 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/08 12:11:46 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-int	parse_input(int argc, char **argv, int params[])
-{
-	int	err;
-
-	err = 0;
-	if (argc != 5 && argc != 6)
-	{
-		printf("Error: Wrong number of args.\n");
-		return (1);
-	}
-	params[4] = 0;
-	while (--argc > 0)
-	{
-		if (!ft_isonlynumstr(argv[argc]))
-		{
-			printf("Error: Non numeric argument.\n");
-			return (1);
-		}
-		params[argc - 1] = ft_raw_atoi(argv[argc]);
-		if (!params[argc - 1] && errno == ERANGE)
-		{
-			printf("Error: Overflow detected.\n");
-			return (1);
-		}
-	}
-	return (0);
-}
 
 void	cleanup(pthread_t *threads, t_winfo *winfo)
 {
@@ -102,29 +74,34 @@ int	run_threads(t_winfo *winfo, pthread_t *threads)
 	return (0);
 }
 
+void	gen_winfo(t_winfo *winfo, pthread_t **threads, int *params)
+{
+	pthread_mutex_init(&winfo->print_mut, NULL);
+	pthread_mutex_init(&winfo->eat_mut, NULL);
+	pthread_mutex_init(&winfo->sim_mut, NULL);
+	winfo->sim_status = ALIVE;
+	winfo->params = params;
+	winfo->may_eat = params[PHILS] - 1;
+	*threads = ft_calloc(params[PHILS] + 1, sizeof(pthread_t));
+	winfo->forks = ft_calloc(params[PHILS], sizeof(pthread_mutex_t));
+	winfo->ph_muts = ft_calloc(params[PHILS], sizeof(pthread_mutex_t));
+	winfo->phinfos = phinfo_init(winfo);
+}
+
 int	main(int argc, char **argv)
 {
 	t_winfo		winfo;
 	pthread_t	*threads;
 	int			params[5];
 
-	pthread_mutex_init(&winfo.print_mut, NULL);
-	pthread_mutex_init(&winfo.eat_mut, NULL);
-	pthread_mutex_init(&winfo.sim_mut, NULL);
-	winfo.sim_status = ALIVE;
-	winfo.params = params;
 	if (parse_input(argc, argv, params))
 	{
 		printf("Usage: %s number_of_philosophers time_to_die time_to_eat "
-				"time_to_sleep [number_of_times_each_philosopher_must_eat]\n",
-				argv[0]);
+			"time_to_sleep [number_of_times_each_philosopher_must_eat]\n",
+			argv[0]);
 		return (1);
 	}
-	winfo.may_eat = params[PHILS] - 1;
-	threads = ft_calloc(params[PHILS] + 1, sizeof(pthread_t));
-	winfo.forks = ft_calloc(params[PHILS], sizeof(pthread_mutex_t));
-	winfo.ph_muts = ft_calloc(params[PHILS], sizeof(pthread_mutex_t));
-	winfo.phinfos = phinfo_init(&winfo);
+	gen_winfo(&winfo, &threads, params);
 	if (!threads || !winfo.forks || !winfo.ph_muts || !winfo.phinfos)
 	{
 		cleanup(threads, &winfo);
