@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 13:11:35 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/10/07 13:11:17 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/08 10:52:45 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	print_msg(t_phinfo *info, char *msg)
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
+	if (get_sim_status(info) != ALIVE)
+		return ;
 	pthread_mutex_lock(info->print_mut);
 	printf("[%li] %d %s\n", time_diff(info->start_time, &tv) / 1000,
 		info->ph_id, msg);

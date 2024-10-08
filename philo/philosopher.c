@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:16:05 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/10/07 16:00:50 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/08 11:02:52 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,14 @@ void	eat(t_phinfo *info, int id, int count)
 	while (1)
 	{
 		pthread_mutex_lock(info->eat_mut);
-		if (get_sim_status(info) != ALIVE)
-			return ;
 		if (*info->may_eat > 0)
 		{
 			*info->may_eat -= 1;
 			break ;
 		}
-		pthread_mutex_unlock(info->eat_mut);
 		if (get_sim_status(info) != ALIVE)
-			return ;
+			break ;
+		pthread_mutex_unlock(info->eat_mut);
 	}
 	pthread_mutex_unlock(info->eat_mut);
 	pthread_mutex_lock(info->forks + id);
@@ -64,11 +62,6 @@ void	eat(t_phinfo *info, int id, int count)
 	gettimeofday(&info->last_meal, NULL);
 	info->ate++;
 	pthread_mutex_unlock(info->ph_mut);
-	pthread_mutex_unlock(info->forks + id);
-	pthread_mutex_unlock(info->forks + (id + 1) % count);
-	pthread_mutex_lock(info->eat_mut);
-	*info->may_eat += 1;
-	pthread_mutex_unlock(info->eat_mut);
 }
 
 void	next_task(t_phinfo *info, int id, int count)
@@ -77,7 +70,13 @@ void	next_task(t_phinfo *info, int id, int count)
 	{
 		eat(info, id, count);
 		print_msg(info, "is eating");
-		isleep(info, info->params[TTEAT]);
+		if (get_sim_status(info) == ALIVE)
+			isleep(info, info->params[TTEAT]);
+		pthread_mutex_unlock(info->forks + id);
+		pthread_mutex_unlock(info->forks + (id + 1) % count);
+		pthread_mutex_lock(info->eat_mut);
+		*info->may_eat += 1;
+		pthread_mutex_unlock(info->eat_mut);
 	}
 	else if (info->ph_status == EATING)
 	{
