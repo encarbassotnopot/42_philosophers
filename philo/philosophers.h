@@ -6,7 +6,7 @@
 /*   By: ecoma-ba <ecoma-ba@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 12:13:55 by ecoma-ba          #+#    #+#             */
-/*   Updated: 2024/10/08 11:00:47 by ecoma-ba         ###   ########.fr       */
+/*   Updated: 2024/10/08 12:07:20 by ecoma-ba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,4 +65,5 @@ void				time_subt(struct timeval *tv, int ms);
 long				time_diff(struct timeval *since, struct timeval *until);
 void				necromancer(t_winfo *w);
 int					get_sim_status(t_phinfo *info);
+int					parse_input(int argc, char **argv, int params[]);
 #endif
