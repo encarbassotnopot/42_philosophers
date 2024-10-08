@@ -1,4 +1,4 @@
-SRC_FILES = $(wildcard *.c) # TODO: no fer servir això
+SRC_FILES = main.c philosopher.c timeutils.c utils.c workers.c
 OBJ_FILES = $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 DEP_FILES = $(patsubst %.c,$(BUILD_DIR)/%.d,$(SRC_FILES))
 
